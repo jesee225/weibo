@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>weibo detail</title>
+</head>
+<body>
+    {% for w in weibos %}
+        <div>
+            <h2>{{ w.content }} @ {{ w.created_time }} from {{ w.user_id }}</h2>
+            <a href="/weibo/edit?id={{w.id}}">edit</a>
+            <a href="/weibo/delete?id={{w.id}}">delete</a>
+            {% for c in w.comments %}
+            <div>
+                <h3>{{ c.content }} @ {{ c.created_time }} form {{ c.user_id }}</h3>
+                <a href="/comment/delete?id={{c.id}}">delete</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+</html>

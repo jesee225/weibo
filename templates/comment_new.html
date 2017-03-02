@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>comment new</title>
+</head>
+<body>
+    <form action="/comment/add" method="post">
+        <input type="hidden" name="weibo_id" value="{{ weibo.id }}">
+        <input name="content">
+        <button>add comment</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>weibo index</title>
+</head>
+<body>
+    <form action="/weibo/add" method="post">
+        <input name="content">
+        <button>add weibo</button>
+    </form>
+    <a href="/weibo/detail">个人微博</a>
+    {% for w in weibos %}
+        <div>
+            {% for u in w.usernames %}
+            <div>
+                <h2>{{ w.content }} {{ u.username }} 发表于 {{ w.created_time }}</h2>
+            </div>
+            {% endfor %}
+        </div>
+    <a href="/comment/new?id={{ w.id }}">comment</a>
+    {% for c in w.comments %}
+        <div>
+            <div>
+                <h4>{{ c.content }} @ {{ c.created_time }} form {{ c.user_id }}</h4>
+            </div>
+        </div>
+    {% endfor %}
+    {% endfor %}
+
+</body>
+</html>
