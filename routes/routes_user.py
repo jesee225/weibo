@@ -56,7 +56,6 @@ def route_register(request):
         form = request.form()
         u = User(form)
         if u.validate_register():
-            u.save()
             return redirect('/login')
         else:
             return redirect('/register')

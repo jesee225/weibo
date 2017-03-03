@@ -11,10 +11,9 @@ from models import Weibo
 
 def index(request):
     weibo_list = Weibo.all()
-    for w in weibo_list:
-        w.load_comments()
-    for w in weibo_list:
-        w.load_usernames()
+    # for w in weibo_list:
+    #     w.comments()
+    #     w.user()
     body = template('weibo_index.html', weibos=weibo_list)
     return http_response(body)
 
@@ -22,8 +21,6 @@ def index(request):
 def detail(request):
     u = current_user(request)
     weibo_list = Weibo.find_all(user_id=u.id)
-    for w in weibo_list:
-        w.load_comments()
     body = template('weibo_detail.html', weibos=weibo_list)
     return http_response(body)
 

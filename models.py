@@ -111,18 +111,24 @@ class User(Model):
         self.password = form.get('password', '')
         self.role = int(form.get('role', 10))
 
+
     def is_admin(self):
         return self.role == 1
 
-    def sha1_password(self, pwd):
+    def salted_password(self, password, salt='$!@><?>HUI&DWQa`'):
+        """$!@><?>HUI&DWQa`"""
         import hashlib
-        s = hashlib.sha1(pwd.encode('ascii'))
-        return s.hexdigest()
+        def sha256(ascii_str):
+            return hashlib.sha256(ascii_str.encode('ascii')).hexdigest()
+
+        hash1 = sha256(password)
+        hash2 = sha256(hash1 + salt)
+        return hash2
 
     def validate_login(self):
         u = User.find_by(username=self.username)
         if u is not None:
-            pwd = self.sha1_password(self.password)
+            pwd = self.salted_password(self.password)
             return u.password == pwd
         else:
             return False
@@ -130,8 +136,13 @@ class User(Model):
     def validate_register(self):
         valid = len(self.username) > 2 and len(self.password) > 2
         if valid:
-            self.password = self.sha1_password(self.password)
-        return valid
+            pwd = self.password
+            self.password = self.salted_password(pwd)
+            if User.find_by(username=self.username) is None:
+                self.save()
+                return self
+            else:
+                return None
 
 
 class Todo(Model):
@@ -158,11 +169,11 @@ class Weibo(Model):
         self.user_id = form.get('user_id', user_id)
         self.created_time = form.get('created_time', None)
 
-    def load_comments(self):
-        self.comments = [c for c in Comment.all() if c.weibo_id == self.id]
+    def comments(self):
+        return Comment.find_all(weibo_id=self.id)
 
-    def load_usernames(self):
-        self.usernames = [u for u in User.all() if u.id == self.user_id]
+    def user(self):
+        return User.find_by(id=self.user_id)
 
 
 # 评论类
@@ -173,3 +184,6 @@ class Comment(Model):
         self.user_id = form.get('user_id', user_id)
         self.weibo_id = int(form.get('weibo_id', None))
         self.created_time = form.get('created_time', None)
+
+    def user(self):
+        return User.find_by(id=self.user_id)

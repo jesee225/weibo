@@ -12,20 +12,15 @@
     <a href="/weibo/detail">个人微博</a>
     {% for w in weibos %}
         <div>
-            {% for u in w.usernames %}
-            <div>
-                <h2>{{ w.content }} {{ u.username }} 发表于 {{ w.created_time }}</h2>
-            </div>
-            {% endfor %}
+            <h2>{{ w.content }} {{ w.user().username }} 发表于 {{ w.created_time }}
+                <a href="/comment/new?id={{ w.id }}">comment</a>
+            </h2>
         </div>
-    <a href="/comment/new?id={{ w.id }}">comment</a>
-    {% for c in w.comments %}
-        <div>
+        {% for c in w.comments() %}
             <div>
-                <h4>{{ c.content }} @ {{ c.created_time }} form {{ c.user_id }}</h4>
+                <h4>{{ c.content }} {{ c.user().username }} 评论于{{ c.created_time }}</h4>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
     {% endfor %}
 
 </body>

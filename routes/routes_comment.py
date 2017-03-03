@@ -30,8 +30,9 @@ def add(request):
 def delete(request):
     comment_id = int(request.query.get('id', -1))
     c = Comment.find_by(id=comment_id)
+    w = Weibo.find_by(id=c.weibo_id)
     u = current_user(request)
-    if c.user_id != u.id:
+    if w.user_id != u.id:
         return error(request)
     Comment.delete(comment_id)
     return redirect('/weibo/detail')
