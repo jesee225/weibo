@@ -111,7 +111,6 @@ class User(Model):
         self.password = form.get('password', '')
         self.role = int(form.get('role', 10))
 
-
     def is_admin(self):
         return self.role == 1
 
@@ -134,34 +133,17 @@ class User(Model):
             return False
 
     def validate_register(self):
-        valid = len(self.username) > 2 and len(self.password) > 2
-        if valid:
+        v = len(self.username) > 2 and len(self.password) > 2
+        u = User.find_by(username=self.username)
+        if v and not u:
             pwd = self.password
             self.password = self.salted_password(pwd)
-            if User.find_by(username=self.username) is None:
-                self.save()
-                return self
-            else:
-                return None
+            self.save()
+            return self
+        else:
+            return None
 
 
-class Todo(Model):
-    def __init__(self, form):
-        self.id = form.get('id', None)
-        self.task = form.get('task', '')
-        self.completed = form.get('completed', False)
-        self.user_id = form.get('user_id', None)
-        self.created_time = form.get('created_time', None)
-
-    def do_completed(self):
-        d = {
-            False: '未完成',
-            True: '完成',
-        }
-        return d.get(self.completed)
-
-
-# 微博类
 class Weibo(Model):
     def __init__(self, form, user_id=-1):
         self.id = form.get('id', None)
@@ -176,13 +158,12 @@ class Weibo(Model):
         return User.find_by(id=self.user_id)
 
 
-# 评论类
 class Comment(Model):
     def __init__(self, form, user_id=-1):
         self.id = form.get('id', None)
         self.content = form.get('content', '')
         self.user_id = form.get('user_id', user_id)
-        self.weibo_id = int(form.get('weibo_id', None))
+        self.weibo_id = form.get('weibo_id', None)
         self.created_time = form.get('created_time', None)
 
     def user(self):
